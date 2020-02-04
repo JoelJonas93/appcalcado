@@ -21,53 +21,51 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fatec.calcados.event.RecursoCriadoEvent;
 import com.fatec.calcados.model.Calcado;
-import com.fatec.calcados.repository.CalcadoRepository;
-import com.fatec.calcados.service.CalcadoService;
+import com.fatec.calcados.model.KitCalcados;
+import com.fatec.calcados.repository.KitCalcadosRepository;
+import com.fatec.calcados.service.KitCalcadosService;
 
 @RestController
-@RequestMapping("/calcados")
-public class CalcadoResource {
-	
+@RequestMapping("/kitcalcados")
+public class KitCalcadosResource {
 	@Autowired
-	private CalcadoRepository calcadoRepository;
+	private KitCalcadosRepository kitRepository;
 	
 	@Autowired
 	private ApplicationEventPublisher publisher;
 	
 	@Autowired
-	private CalcadoService calcadoService;
+	private KitCalcadosService kitCalcadosService;
 	
 	@GetMapping
-	public List<Calcado> listarCalcados(){
-		return calcadoRepository.findAll();
+	public List<KitCalcados> listarKits(){
+		return kitRepository.findAll();
 	}
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Calcado> criarCalcado(@Valid @RequestBody Calcado calcado, HttpServletResponse response ) {
-		Calcado calcadoSalvo = calcadoRepository.save(calcado);
-		publisher.publishEvent(new RecursoCriadoEvent(this, response, calcadoSalvo.getCld_id()));
-		return ResponseEntity.status(HttpStatus.CREATED).body(calcadoSalvo);
+	public ResponseEntity<KitCalcados> criarKitCalcados(@Valid @RequestBody KitCalcados kitCalcados,HttpServletResponse response){
+		KitCalcados kitCalcadosSalvo = kitRepository.save(kitCalcados);
+		publisher.publishEvent(new RecursoCriadoEvent(this, response, kitCalcadosSalvo.getKitCalcadoId()));
+		return ResponseEntity.status(HttpStatus.CREATED).body(kitCalcados);
 	}
 	
-	
 	@GetMapping("/{id}")
-	public Calcado getCalcadoId(@PathVariable Long id) {
-		 
-		Calcado calcado =	calcadoRepository.findById(id).get();
-		return calcado;
+	public KitCalcados getKitCalcadosId(@PathVariable Long id) {
+		KitCalcados kitCalcados = kitRepository.findById(id).get();
+		return kitCalcados;
 	}
 	
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public  void removerCalcado(@PathVariable Long id) {
-		calcadoRepository.deleteById(id);
+	public void removerKitCalcados(@PathVariable Long id) {
+		kitRepository.deleteById(id);
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Calcado> atualizarCalcado(@PathVariable Long id,@Valid @RequestBody Calcado calcado){
-		Calcado calcadoSalvo = calcadoService.atualizar(id, calcado);
-		return ResponseEntity.ok(calcadoSalvo);
+	public ResponseEntity<KitCalcados> atualizarKitCalcados(@PathVariable Long id, @Valid @RequestBody KitCalcados kitCalcados){
+	KitCalcados kitSalvo = kitCalcadosService.atualizar(id,kitCalcados);
+	return ResponseEntity.ok(kitSalvo);
 	}
-	
+
 }

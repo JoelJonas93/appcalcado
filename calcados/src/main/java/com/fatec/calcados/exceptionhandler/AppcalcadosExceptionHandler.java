@@ -3,6 +3,7 @@ package com.fatec.calcados.exceptionhandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -53,7 +54,14 @@ public class AppcalcadosExceptionHandler extends ResponseEntityExceptionHandler{
 		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 	}
 	
-	
+	@ExceptionHandler({NoSuchElementException.class})
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex, WebRequest request){
+		String mensagemUsuario = messageSource.getMessage("objeto.nao-encontrado",null,LocaleContextHolder.getLocale());
+		String mensagemDesenvolvedor = ex.toString();
+		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario,mensagemDesenvolvedor));
+		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+	}
 	
 	
 	private List<Erro> criarListaErros(BindingResult bindResult){
